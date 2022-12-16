@@ -1,0 +1,34 @@
+/*
+    if(empty($F_name_err||$M_name_err||$L_name_err))
+    {
+      for($i=1;$i<100;$i++){
+      $sql7="SELECT F_name, M_name, L_name FROM patient WHERE P_id=$i";}
+      $stmt=mysqli_prepare($conn,$sql);
+      mysqli_stmt_bind_param($stmt, "i", $param_pid);
+      $param_pid=$i;
+
+      //try to execute this statemment
+      if(mysqli_stmt_execute($stmt))
+      {
+        mysqli_stmt_store_result($stmt);
+        if(mysqli_stmt_num_rows($stmt)==1)
+        {
+          mysqli_stmt_bind_result($stmt,$F_name,$M_name,$L_name);
+          if(mysqli_stmt_fetch($stmt))
+          {
+            
+            {
+              //the password is correct.allow user to login
+              session_start();
+              $_SESSION["F_name"]=$F_name;
+              $_SESSION["M_name"]=$M_name;
+              $_SESSION["L_name"]=$L_name;
+              
+            }
+            
+            
+          }
+        }
+      }
+    }*/
+    

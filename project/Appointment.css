@@ -1,0 +1,65 @@
+﻿form {
+    display: flex;
+    flex-direction: column;
+    width: 20%;
+    margin: 0 auto;
+}
+
+input {
+    margin-bottom: 4px;
+    padding: 4px;
+    background-color: azure;
+    font-size: 14px;
+}
+
+option {
+    margin-bottom: 4px;
+    padding: 4px;
+    background-color: azure;
+    font-size: 14px;
+    color: rgb(133, 133, 133);
+}
+
+select {
+    margin-bottom: 4px;
+    padding: 4px;
+    background-color: azure;
+    font-size: 14px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: rgb(118, 118, 118), rgb(133, 133, 133);
+    color: rgb(133, 133, 133);
+    font-weight: 400;
+}
+
+textarea {
+    margin-bottom: 8px;
+    padding: 4px;
+    background-color: azure;
+    font-size: 14px;
+    border-width: 2px;
+    border-style: inset;
+    border-color: rgb(118, 118, 118), rgb(133, 133, 133);
+    color: rgb(133, 133, 133);
+    font-weight: 400;
+}
+
+label {
+    font-weight: bold;
+    font-size: 18px;
+}
+
+button {
+    margin-bottom: 4px;
+    padding: 4px;
+    background-color: azure;
+    font-size: 14px;
+}
+
+/* ERROR MESSAGE */
+.error {
+    color: red;
+    padding: 2px 4px;
+    display: none;
+    margin: 4px 0px;
+}

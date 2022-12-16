@@ -1,0 +1,55 @@
+//appointment
+    if(empty($A_date_err)&& empty($A_time_err))
+    {
+      //"SET FOREIGN_KEY_CHECKS=0";
+       
+        //$D_id=
+        
+        $id="SELECT `D_id` FROM `doctor` WHERE `S_id`=$dname";
+        $sql2="INSERT INTO appointment (D_id,A_date,A_time) VALUES('$id',?,?)";
+        $stmt=mysqli_prepare($conn,$sql2);
+
+        if($stmt)
+        {
+          mysqli_stmt_bind_param($stmt, "iss",$param_id,$param_adate,$param_atime);
+
+          //set parameters
+          $param_id=$id;
+          $param_adate=$A_date;
+          $param_atime=$A_time;
+                    
+          if(mysqli_stmt_execute($stmt))
+          {
+           
+            mysqli_stmt_store_result($stmt);
+          }
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+
+
+
+
+
+
+    if(isset($_POST['Submit']))
+      {
+        $pid="SELECT count(*) FROM `patient`";
+          //insert check box values
+          $history=implode(',',$_POST['history']);
+          //insert into database
+          $sql6="INSERT INTO patient_history(P_id,P_history)values('$pid','$history')";
+          $stmt=$conn->prepare($sql6);
+          
+      }
+      
+      if(mysqli_stmt_execute($stmt))
+      {
+          mysqli_stmt_store_result($stmt);
+          header("location:appointment_patient.php");
+      }
+      else
+      {
+          echo "Something went wrong... cannot redirect!";
+      }

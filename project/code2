@@ -1,0 +1,264 @@
+<?php
+  require_once "configure.php";
+
+  $F_name=$M_name=$L_name=$Sex=$Address=$Dob=$A_date=$A_time=$Reason=$P_history=$dname='';
+  $F_name_err=$M_name_err=$L_name_err=$Sex_err=$Address_err=$Dob_err=$A_date_err=$A_time_err=$Reason_err=$P_history_err=$dname_err='';
+
+  if($_SERVER['REQUEST_METHOD'] == 'POST')
+  {
+    //check if any input is empty
+    if(empty(trim($_POST['F_name'])))
+    {
+      $F_name_err='First Name cannot be blank';
+    }
+    elseif(empty(trim($_POST['M_name'])))
+    {
+      $M_name_err='Middle Name cannot be empty';
+    }
+    elseif(empty(trim($_POST['L_name'])))
+    {
+      $L_name_err='Last Name cannot be empty';
+    }
+    elseif(empty(trim($_POST['Dob'])))
+    {
+      $Dob_err='DOB cannot be empty';
+    }
+    elseif(empty(trim($_POST['Sex'])))
+    {
+      $Sex_err='Sex cannot be empty';
+    }
+    elseif(empty(trim($_POST['Address'])))
+    {
+      $Address_err='Address cannot be empty';
+    }
+    elseif(empty(trim($_POST['A_date'])))
+    {
+      $A_date_err='Date cannot be empty';
+    }
+    elseif(empty(trim($_POST['A_time'])))
+    {
+      $A_time_err='Time cannot be empty';
+    }
+    elseif(empty(trim($_POST['Reason'])))
+    {
+      $Reason_err='Reason cannot be empty';
+    }
+    elseif(empty($_POST['history']))
+    {
+      $P_history_err='History cannot be empty';
+    }
+    elseif(empty($_POST['dname']))
+    {
+      $dname_err='Specialization cannot be empty';
+    }
+    else
+    {
+      $F_name=trim($_POST['F_name']);
+      $M_name=trim($_POST['M_name']);
+      $L_name=trim($_POST['L_name']);
+      $Dob=trim($_POST['Dob']);
+      $Sex=trim($_POST['Sex']);
+      $Address=trim($_POST['Address']);
+      //appointment
+      $A_date=trim($_POST['A_date']);
+      $A_time=trim($_POST['A_time']);
+      $dname=trim($_POST['dname']);
+      echo $dname;
+      //reason
+      $Reason=trim($_POST['Reason']);
+      //history
+      $P_history=($_POST['history']);
+    }
+
+    //if no errors insert into database
+    if(empty($F_name_err)&& empty($M_name_err)&& empty($L_name_err)&& empty($Dob_err)&& empty($Sex_err)&& empty($Address_err))
+    {
+        $sql1="INSERT INTO patient (F_name,M_name,L_name,Dob,Sex,Address) VALUES(?,?,?,?,?,?)";
+        $stmt=mysqli_prepare($conn,$sql1);
+        if($stmt)
+        {
+            mysqli_stmt_bind_param($stmt, "ssssss", $param_fname,$param_mname,$param_lname,$param_dob,$param_sex,$param_address);
+
+            //set the parameters
+            $param_fname=$F_name;
+            $param_mname=$M_name;
+            $param_lname=$L_name;
+            $param_dob=$Dob;
+            $param_sex=$Sex;
+            $param_address=$Address;
+            if(mysqli_stmt_execute($stmt))
+              {
+                mysqli_stmt_store_result($stmt);
+              }
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+    
+
+    if(empty($A_date_err)&& empty($A_time_err)&&empty($dname_err))
+    {
+      //"SET FOREIGN_KEY_CHECKS=0";
+        $sql5="SELECT `D_id` FROM `doctor` WHERE `S_id`= $dname";
+        
+        $stmt=$conn->prepare($sql5);
+        $stmt->execute();
+        
+        $sql2="INSERT INTO appointment (D_id,A_date,A_time) VALUES($sql5,?,?)";
+        //$D_id="SELECT `D_id` FROM `doctor` WHERE `S_id`= $dname";
+        $stmt=mysqli_prepare($conn,$sql2);
+        if($stmt)
+        {
+          mysqli_stmt_bind_param($stmt, "iss", $param_did,$param_adate,$param_atime);
+
+          //set parameters
+          $param_did=$sql5;
+          $param_adate=$A_date;
+          $param_atime=$A_time;
+                    
+          if(mysqli_stmt_execute($stmt))
+          {
+            mysqli_stmt_store_result($stmt);
+          }
+        }
+        mysqli_stmt_close($stmt);
+    }
+
+
+    if( empty($Reason_err))
+    {
+        $sql3="INSERT INTO appoint_reason (Reason) VALUES(?)";
+        $stmt=mysqli_prepare($conn,$sql3);
+        if($stmt)
+        {
+          mysqli_stmt_bind_param($stmt, "s", $param_reason);
+
+          //set parameters
+          $param_reason=$Reason;
+
+          //try to execute the query
+
+          if(mysqli_stmt_execute($stmt))
+          {
+              mysqli_stmt_store_result($stmt);
+              header("location:appointment_patient.php");
+          }
+          else
+          {
+              echo "Something went wrong... cannot redirect!";
+          }
+
+        }
+        mysqli_stmt_close($stmt);
+    }
+    if( empty($P_history_err))
+    {
+      if($_POST["Submit"]=="Submit")
+      {
+        for($i=0;$i<sizeof($history);$i++)
+        {
+          $sql4="INSERT INTO patient_history (P_history) VALUES(?)";
+        }
+        $stmt=mysqli_prepare($conn,$sql4);
+      } 
+      
+    }
+        if($stmt)
+        {
+          mysqli_stmt_bind_param($stmt, "s", $param_history);
+
+          //set parameters
+          $param_reason=$P_history;
+
+          //try to execute the query
+
+          if(mysqli_stmt_execute($stmt))
+          {
+              mysqli_stmt_store_result($stmt);
+              header("location:appointment.php");
+          }
+          else
+          {
+              echo "Something went wrong... cannot redirect!";
+          }
+
+        }
+        mysqli_stmt_close($stmt);
+    
+    mysqli_close($conn);
+
+  }
+
+?>
+
+
+<html>
+    <head>
+        <title>Jesus's Clinic</title>
+        <link rel="icon" href="logos.ico">
+        <link rel="stylesheet" href="Design.css">
+        <link rel="stylesheet" href="Appointment.css">
+    </head>
+    <body><center><h2 style="color:white;">Book Your Appointment</h2>
+        <form method="post"><br><br>
+  
+
+  <label>First Name:</label>
+  <input type="text" id="" name="F_name" placeholder="Enter First name"><br>
+  
+  <label>Middle Name:</label>
+  <input type="text" id="" name="M_name" placeholder="Enter Middle name"><br>
+
+  <label>Last name:</label>
+  <input type="text" id="" name="L_name" placeholder="Enter Last name"><br>
+  
+
+  <label>DOB:</label>
+  <input type="date" id="" name="Dob"><br>
+  
+
+  <label>Sex:</label>
+  <select name="Sex" id="">
+    <option value="" selected disabled>Choose an option...</option>
+    <option value="Male">Male</option>
+    <option value="Female">Female</option>
+  </select><br>
+
+  <label>Address:</label>
+  <textarea name="Address" id="" cols="30" rows="10" placeholder="Enter Address..."></textarea><br>
+  
+  <fieldset><legend><label>Patient Medical History:</label></legend>
+    <br><input type="checkbox" name="history[]" value="Heart problem">Heart problem<br><br>
+    <input type="checkbox" name="history[ ]" value="Hyper tension">Hyper Tension<br><br>
+    <input type="checkbox" name="history[ ]" value="Kidney problem">Kidney problem<br><br>
+    <input type="checkbox" name="history[ ]" value="Asthama/Breathing problem">Asthama/Breathing problem<br><br>
+    <input type="checkbox" name="history[ ]" value="Surgeries">Sugeries<br><br>
+    <input type="checkbox" name="history[ ]" value="Diabetes">Diabeties<br><br>
+    <input type="checkbox" name="history[ ]" value="cancer">cancer<br><br>
+    <input type="checkbox" name="history[ ]" value="Chest pain">Chest pain<br><br>
+  </fieldset><br>
+
+  <label>Appointment With:</label>
+  <select name="dname" id="">
+    <option value="" selected disabled>Choose an option...</option>
+    <option value="1">Cardiologist</option>
+    <option value="2">Dentist</option>
+    <option value="3">Dermotologist</option>
+    <option value="4">ENT</option>
+    <option value="5">General Physician</option>
+  </select><br>
+
+  <label>Reason for Appointment:</label>
+  <textarea name="Reason" id="" cols="30" rows="10" placeholder="Enter Reason..."></textarea><br>  
+  
+  <label>Appointment Date:</label>
+  <input type="date" id="" name="A_date"><br>
+
+  <label>Appointment time:</label>
+  <input type="time" id="" name="A_time"><br>
+
+  <input type="submit" name="Submit" value="Submit"><input type="reset">
+</form>
+   </center></body>
+</html>        
+        
