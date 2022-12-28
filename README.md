@@ -12,9 +12,4 @@ Session are used once the patient, nurse, doctor logsin welcome page will be dis
 
 For the serverside php is been used,sql queries like aggrigate, limit, triggers, views, joins are been used.
 
-
-
-
-
-Here the code for creating the database:
-
+There is a file to create database.
